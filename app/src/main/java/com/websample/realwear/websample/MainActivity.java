@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getLayoutInflater().setFactory(new AttrFactory());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

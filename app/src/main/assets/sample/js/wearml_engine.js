@@ -123,16 +123,11 @@ this.ASRPolling;
 **/
 this.getAllElementsWithAttribute = function(attribute)
 {
-  //Clear up buttons
-  for(var i = 0; i < wearML.wearHFButtons.length; i++){
-        document.body.removeChild(wearML.wearHFButtons[i]);
-  }
   wearML.wearHFButtons = [];
   this.allElements = document.body.getElementsByTagName(attribute);
 
   for (var i = 0, n = this.allElements.length; i < n; i++)
   {
-     console.log(this.allElements[i].tagName);
     //Check element to see if it has atleast one of our tags
     this.currentElement = this.allElements[i];
 
@@ -234,10 +229,10 @@ this.createButton = function(element, node){
     this.btn.id = element.tag + "WML_NODE";
 
     this.t = document.createTextNode(element.tag);       // Create a text node
-    //this.btn.style.fontSize = "0.01px";
+    this.btn.style.fontSize = "0.01px";
     this.btn.appendChild(this.t);                                // Append the text to <button>
-    this.btn.style.top = 0;//node.getBoundingClientRect().top;
-    this.btn.style.left = node.getBoundingClientRect().left;
+    this.btn.style.top = node.getBoundingClientRect().top + "px";
+    this.btn.style.left = node.getBoundingClientRect().left + "px";
     this.btn.onclick = function(element){
         for (var i = 0, n = wearML.wearMLElements.length; i < n; i++)
         {
@@ -260,11 +255,11 @@ this.createButton = function(element, node){
             }
         }
     };
-    //this.btn.style.opacity  = "0.01";
+    this.btn.style.opacity  = "0.01";
     this.btn.style.position = "absolute";
     this.btn.style.width = node.offsetWidth;
     this.btn.style.height = node.offsetHeight;
-    //this.btn.style.zIndex = "-1";
+    this.btn.style.zIndex = "-1";
     // Get a reference to the first child
     var theFirstChild = document.body.firstChild;
     document.body.appendChild(this.btn);
