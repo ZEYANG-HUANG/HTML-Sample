@@ -43,12 +43,10 @@ public class MainActivity extends AppCompatActivity{
         web.getSettings().setAllowFileAccess(true);
         web.getSettings().setAllowFileAccessFromFileURLs(true);
         web.getSettings().setSupportMultipleWindows(true);
+        web.addJavascriptInterface(new WebAppInterface(this), "WearHFNative");
 
         web.loadUrl("file:///android_asset/sample/index.html");
-        web.getSettings().setPluginState(WebSettings.PluginState.ON);
-        web.clearHistory();
-        web.clearFormData();
-        web.clearCache(true);
+
 
         WebSettings webSettings = web.getSettings();
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -77,11 +75,17 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     public void callJavascriptFunction(String func){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             web.evaluateJavascript(func, null);
         }
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
@@ -92,5 +96,4 @@ public class MainActivity extends AppCompatActivity{
         }
         return super.onKeyDown(keyCode, event);
     }
-
 }

@@ -26,8 +26,8 @@
 /*----------------------- SOURCE MODULE INFORMATION -------------------------+
  |
  | Source Name:  WearML Engine
- | Version: v0.9.3
- | Date: December 2017
+ | Version: v0.9.5
+ | Date: June 2018
  | Author: Luke Hopkins
  |
  +---------------------------------------------------------------------------*/
@@ -111,9 +111,10 @@ this.getCommands = function() {
    wearML.observer.disconnect();
    this.elements = wearML.getAllElementsWithAttribute('*');
    wearML.createOverrideDom();
+   wearML.updateSpeechCommands();
    this.rootElement = document.documentElement;
    wearML.observer.observe(this.rootElement, wearML.config);
-   //createRootDom();
+
 };
 
 this.ASRPolling;
@@ -135,13 +136,14 @@ this.getAllElementsWithAttribute = function(attribute)
     {
         if(this.currentElement.tagName != "SCRIPT"){
 
-        console.log(this.allElements[i].tagName);
+
         this.styleId = this.currentElement.getAttribute('data-wml-style');
+
         this.command = this.currentElement.text;
 
         this.speech_command = this.currentElement.getAttribute('data-wml-speech-command');
 
-        if(this.speech_command == undefined || this.speech_command == " " || this.speech_command == ""){
+        if((this.speech_command == undefined || this.speech_command == " " || this.speech_command == "") && !this.styleId){
 
         }else {
             this.command = this.speech_command;
@@ -152,17 +154,17 @@ this.getAllElementsWithAttribute = function(attribute)
         }
 
         this.position = this.getPosition(this.currentElement);
-
+        console.log(this.styleId);
         this.element = {tag: this.command, id: this.currentElement.id,x: this.position.x, y: this.position.y, styleId: this.styleId };
 
          // Element exists with attribute. Add to array.
          wearML.wearMLElements.push(this.element);
-         this.currentElement.addEventListener("click",  this.onReceivedCommand.bind(this.currentElement, this.command));// Create a text node
+
 
          if(this.voiceCommandsCallBack != undefined)
           this.currentElement.addEventListener("click",  this.voiceCommandsCallBack.bind(this.currentElement, this.command));// Create a text node
 
-         this.createButton(this.element, this.currentElement);
+           this.createButton(this.element, this.currentElement);
         }
         }
     }
@@ -172,7 +174,28 @@ this.getAllElementsWithAttribute = function(attribute)
 
 
 this.onReceivedCommand = function(command){
-	wearML.pollCommands();
+     console.log(command);
+	 for (var i = 0, n = wearML.wearMLElements.length; i < n; i++)
+     {
+          this.command = wearML.wearMLElements[i].tag;
+
+          if(this.command === command){
+                        this.ele = document.getElementById(wearML.wearMLElements[i].id);
+
+                          if(this.ele.tagName  === "INPUT" | this.ele.tagName  === "TEXTAREA"){
+                             this.ele.focus();
+                             this.ele.click();
+                             //this.ele.blur();
+                          }else if(this.ele.tagName === "SELECT"){
+                              this.event = document.createEvent('MouseEvents');
+                              this.event.initMouseEvent('mousedown', true, true, window);
+                              this.ele.dispatchEvent(this.event);
+                          }else{
+                              this.event = new Event('click');
+                              this.ele.dispatchEvent(this.event);
+                          }
+          }
+     }
 };
 
 /**
@@ -214,6 +237,10 @@ this.createOverrideDom = function(){
    document.body.insertBefore(this.btn, this.theFirstChild);
 };
 
+this.updateSpeechCommands = function() {
+   WearHFNative.updateVoiceCommands();
+}
+
 
 /**
 * Create hidden button for WearHF to interact with
@@ -229,39 +256,17 @@ this.createButton = function(element, node){
     this.btn.id = element.tag + "WML_NODE";
 
     this.t = document.createTextNode(element.tag);       // Create a text node
-    this.btn.style.fontSize = "0.01px";
+   // this.btn.style.fontSize = "0.01px";
     this.btn.appendChild(this.t);                                // Append the text to <button>
     this.btn.style.top = node.getBoundingClientRect().top + "px";
     this.btn.style.left = node.getBoundingClientRect().left + "px";
-    this.btn.onclick = function(element){
-        for (var i = 0, n = wearML.wearMLElements.length; i < n; i++)
-        {
-            if (element.srcElement.textContent === wearML.wearMLElements[i].tag) {
-                this.ele = document.getElementById(wearML.wearMLElements[i].id);
-                //console.log(this.ele.tagName);
-
-                if(this.ele.tagName  === "INPUT" | this.ele.tagName  === "TEXTAREA"){
-                   this.ele.focus();
-                   this.ele.click();
-                }else if(this.ele.tagName === "SELECT"){
-                    this.event = document.createEvent('MouseEvents');
-                    this.event.initMouseEvent('mousedown', true, true, window);
-                    this.ele.dispatchEvent(this.event);
-                }else{
-                    this.event = new Event('click');
-                    this.ele.dispatchEvent(this.event);
-                }
-
-            }
-        }
-    };
+    this.btn.addEventListener("click",  this.onReceivedCommand.bind(element, element.tag));// Create a text node
     this.btn.style.opacity  = "0.01";
     this.btn.style.position = "absolute";
-    this.btn.style.width = node.offsetWidth;
-    this.btn.style.height = node.offsetHeight;
+    this.btn.style.width = node.offsetWidth + "px";
+    this.btn.style.height = node.offsetHeight + "px";
     this.btn.style.zIndex = "-1";
     // Get a reference to the first child
-    var theFirstChild = document.body.firstChild;
     document.body.appendChild(this.btn);
 
     wearML.wearHFButtons.push(this.btn);
@@ -284,9 +289,9 @@ this.generateXML = function(){
       this.xml += "<View ";
       this.xml += "id=\"" + wearML.wearMLElements[i].id + "\" ";
 
-      if(this.command != undefined){
-               this.xml += "speech_command=\""+ "no" + "\" ";
-      }
+     // if(this.command != undefined){
+                this.xml += "speech_command=\""+ "no" + "\" ";
+      //}
 
       this.style = this.getStyle(this.styleId)
 

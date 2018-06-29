@@ -5,11 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/root"
+    android:clickable="true"
+    android:contentDescription="hf_broadcast_results"
     tools:context="com.websample.realwear.websample.MainActivity">
 
-   <WebView
+   <com.websample.realwear.websample.WearWebView
        android:id="@+id/webView"
+       android:clickable="true"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"></WebView>
+       android:layout_height="match_parent"></com.websample.realwear.websample.WearWebView>
 
 </RelativeLayout>
