@@ -99,6 +99,7 @@ this.root_overlay_show_icon = "";
 this.root_overlay_offset = "";
 this.root_hf_scroll = "";
 this.root_hide_help = "";
+this.root_global = "";
 
 this.getCommands = function() {
 
@@ -408,7 +409,7 @@ this.wearMLParser = function(e, element) {
    var get_overlay_offset = e != undefined ? e.getPropertyValue(this.overlay_offset).trim() : this.root_overlay_offset;
    var get_hf_scroll = e != undefined ? e.getPropertyValue(this.hf_scroll).trim() : this.root_hf_scroll;
    var get_barcode = e != undefined ? e.getPropertyValue(this.barcode).trim() : "";
-   var get_global = e != undefined ? e.getPropertyValue(this.global).trim() : "";
+   var get_global = e != undefined ? e.getPropertyValue(this.global).trim() : this.root_global;
    var get_hide_help = e != undefined ? e.getPropertyValue(this.hide_help).trim() : "";
    var get_broadcast_results = e != undefined ? e.getPropertyValue(this.broadcast_results).trim() : "";
 
@@ -431,6 +432,7 @@ this.wearMLParser = function(e, element) {
                    this.root_overlay_offset = get_overlay_offset;
                    this.root_hf_scroll = get_hf_scroll;
                    this.root_hide_help = get_hide_help;
+                   this.root_global = get_global;
               }
    }
 
@@ -574,6 +576,7 @@ this.wearMLParser = function(e, element) {
                attributes += "global_commands=\"yes\" ";
              else{
                  attributes += "global_commands=\"no\" ";
+
           }
     }
 
